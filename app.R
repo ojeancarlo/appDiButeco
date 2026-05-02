@@ -47,36 +47,36 @@ get_data <- function() {
 dados_bares <- get_data()
 
 # construindo a ui do user
-ui <- fillPage(
+ui <- fluidPage(
+  title = "Circuito Comida di Buteco 2026 - RP",
   tags$head(
-    tags$title("Circuito Comida di Buteco 2026 - RP"),
+    tags$meta(name = "viewport", content = "width=device-width, initial-scale=1.0"),
     tags$style(HTML("
-      html, body { width: 100%; height: 100vh; margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-      .container-fluid { padding: 0 !important; }
+      /* Configuração Flexbox para o corpo da página */
+      html, body { width: 100%; height: 100vh; margin: 0; padding: 0; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; flex-direction: column; }
+
+      /* Transforma o container base do fluidPage em um flex container */
+      .container-fluid { padding: 0 !important; display: flex; flex-direction: column; flex-grow: 1; height: 100%; }
+
+      /* Impede que o cabeçalho, filtros e rodapé sejam esmagados pelo mapa */
+      .header-container, .filter-row, .footer-container { flex-shrink: 0; z-index: 10; }
 
       .header-container { background-color: white; padding: 15px 30px; border-bottom: 5px solid #EB7E00; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
       .project-desc { color: #666; font-size: 13px; line-height: 1.4; margin-top: 8px; width: 100%; }
 
-      .filter-row { background-color: #fcfcfc; padding: 10px 25px; border-bottom: 1px solid #eee; }
+      /* Adicionado scroll vertical caso os filtros empilhados passem de 40% da tela */
+      .filter-row { background-color: #fcfcfc; padding: 10px 25px; border-bottom: 1px solid #eee; max-height: 40vh; overflow-y: auto; }
 
-      #map { height: calc(100vh - 325px) !important; width: 100%; }
+      /* O pulo do gato: flex-grow: 1 faz o mapa ocupar exatamente o espaço que sobrar */
+      #map { flex-grow: 1; height: 100% !important; width: 100%; z-index: 1; }
 
       .distancia-painel {
-        position: absolute; bottom: 105px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.95);
+        position: absolute; bottom: 80px; right: 20px; z-index: 1000; background: rgba(255,255,255,0.95);
         padding: 15px; border-radius: 10px; border-left: 6px solid #56A853; width: 320px; max-height: 310px;
         overflow-y: auto; font-size: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       }
 
-      .footer-container {
-        padding: 10px 30px;
-        background-color: white;
-        color: #444;
-        text-align: left;
-        font-size: 11px;
-        border-top: 2px solid #56A853;
-        line-height: 1.6;
-      }
-
+      .footer-container { padding: 10px 30px; background-color: white; color: #444; text-align: left; font-size: 11px; border-top: 2px solid #56A853; line-height: 1.6; }
       .footer-container a { color: #0077B5; text-decoration: none; font-weight: bold; }
       .footer-container a:hover { text-decoration: underline; }
 
@@ -84,6 +84,27 @@ ui <- fillPage(
       .petisco-txt { color: #666; font-style: italic; font-size: 11px; display: block; margin-top: 2px; }
       .btn-roteirizar { background-color: #56A853; color: white; border: none; margin-top: 25px; width: 100%; border-radius: 4px; padding: 6px; font-weight: bold; cursor: pointer;}
       .btn-reset { background-color: #f0f0f0; color: #666; border: 1px solid #ccc; margin-top: 25px; width: 100%; border-radius: 4px; padding: 6px; font-weight: bold; cursor: pointer;}
+
+      /* --- MEDIA QUERIES (REGRAS EXCLUSIVAS PARA CELULARES) --- */
+      @media (max-width: 768px) {
+        .header-container { padding: 10px 15px; }
+        h1 { font-size: 22px !important; }
+        .filter-row { padding: 10px 15px; }
+
+        /* Corrige o espaçamento dos botões quando eles empilham no mobile */
+        .btn-roteirizar, .btn-reset { margin-top: 10px; }
+
+        /* Centraliza o painel de distâncias e adapta ao tamanho da tela */
+        .distancia-painel {
+          width: 90%;
+          left: 5%;
+          right: 5%;
+          bottom: 20px;
+          max-height: 35vh;
+        }
+
+        .footer-container { padding: 10px 15px; font-size: 10px; }
+      }
     "))
   ),
   div(class = "header-container",
@@ -251,5 +272,3 @@ server <- function(input, output, session) {
 
 options(shiny.launch.browser = TRUE)
 shinyApp(ui, server)
-
-cd C:/Users/Jean.Silva/Desktop/jeancarlo/projetosR/appDiButeco
